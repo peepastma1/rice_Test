@@ -1,0 +1,96 @@
+.edit-result-container {
+    padding: 20px;
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* Style for the form container */
+  .form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    max-width: 1600px;
+    min-width: 800px;
+    margin: 0 auto; /* Center the form */
+  }
+  
+  /* Style for the input fields and buttons */
+  .form-container input,
+  .form-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .form-container textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .form-container .form-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .form-container button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .form-container button[type="button"] {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .form-container button:hover {
+    opacity: 0.8;
+  }
+  
+  .form-container button[type="button"]:hover {
+    background-color: #ddd;
+  }
+  
+  .form-buttons button.submit-button {
+    background-color: #4CAF50; /* Red color */
+  }
+  /* Flexbox to ensure checkboxes are in a row but on a new line */
+.sampling-points-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping when the line is full */
+    gap: 15px; /* Space between checkboxes */
+    margin-top: 10px; /* Add a bit of space above */
+  }
+  
+  /* Style for the checkbox labels */
+.sampling-checkbox {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px; /* Space between each checkbox label */
+    font-size: 16px; /* Increase font size if needed */
+    white-space: nowrap; /* Prevent text from wrapping */
+  }
+  
+  .sampling-checkbox input {
+    margin-right: 8px; /* Space between the checkbox and text */
+  }
+  
+  .sampling-checkbox input:checked + span {
+    color: green; /* Change text color to green */
+  }
+
+  .sampling-checkbox span {
+    padding-left: 10px; /* Add padding to the text */
+  }
+  
+  
+  
