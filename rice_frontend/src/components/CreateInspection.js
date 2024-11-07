@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./CreateInspection.css"; // Import the CSS file
+import "./CreateInspection.css";
+import { useNavigate } from "react-router-dom";
 
 function CreateInspection() {
+  const navigate = useNavigate();
   const [standards, setStandards] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -15,13 +17,11 @@ function CreateInspection() {
   });
 
   useEffect(() => {
-    // Fetch standards from the provided URL
     axios
       .get(
         "https://easyrice-es-trade-data.s3.ap-southeast-1.amazonaws.com/standards.json"
       )
       .then((response) => {
-        // Set standards to the fetched data
         setStandards(response.data);
       })
       .catch((error) => {
@@ -46,11 +46,66 @@ function CreateInspection() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Submit the form data
-    axios
-      .post("/api/history", formData)
-      .then((response) => console.log(response))
-      .catch((error) => console.error(error));
+  
+    // If a file is uploaded, process the JSON file
+    if (formData.upload) {
+      const file = formData.upload;
+  
+      // Create a FileReader to read the file
+      const reader = new FileReader();
+  
+      reader.onload = (event) => {
+        try {
+          // Parse the JSON data from the file
+          const jsonData = JSON.parse(event.target.result);
+  
+          // Extract requestID from the JSON
+          const requestID = jsonData.requestID;
+  
+          // Log the form data
+          const currentDateTime = new Date();
+          const formattedDateTime = currentDateTime.toLocaleString();
+  
+          console.log("Name:", formData.name);
+          console.log("Standard:", formData.standard);
+          console.log("Name of File:", file.name); // File name from the upload
+          console.log("Note:", formData.note);
+          console.log("Price:", formData.price);
+          console.log("Sampling Points:", formData.samplingPoints.join(", "));
+          console.log("Date/Time:", formData.dateTime);
+          console.log("Date/Time Submitted:", formattedDateTime);
+  
+          // Log the Request ID from the uploaded JSON
+          console.log("Request ID from uploaded JSON:", requestID);
+  
+          // Uncomment this to send the data to the backend
+          // axios
+          //   .post("/api/history", formData)
+          //   .then((response) => console.log(response))
+          //   .catch((error) => console.error("Error posting data:", error));
+  
+        } catch (error) {
+          console.error("Error reading or parsing JSON file:", error);
+        }
+      };
+  
+      // Read the file as text (expecting JSON format)
+      reader.readAsText(file);
+    } else {
+      console.log("No file uploaded.");
+      
+      // If no file is uploaded, send the form data without the file
+      // Uncomment this to send the data to the backend
+      // axios
+      //   .post("/api/history", formData)
+      //   .then((response) => console.log(response))
+      //   .catch((error) => console.error("Error posting data:", error));
+    }
+  };
+  
+
+  const handleCancel = () => {
+    navigate("/history"); // Navigate to the history page
   };
 
   return (
@@ -101,16 +156,16 @@ function CreateInspection() {
           />
 
           <label>Sampling Points:</label>
-          <div>
+          <div className="sampling-points-container">
             {["Front End", "Back End", "Other"].map((point) => (
-              <label key={point}>
+              <div key={point} className="sampling-point">
                 <input
                   type="checkbox"
                   value={point}
                   onChange={handleSamplingPointChange}
                 />
-                {point}
-              </label>
+                <span>{point}</span>
+              </div>
             ))}
           </div>
 
@@ -132,7 +187,7 @@ function CreateInspection() {
           />
 
           <div className="button-container">
-            <button type="button" className="cancel-btn">
+            <button type="button" className="cancel-btn" onClick={handleCancel}>
               Cancel
             </button>
             <button type="submit" className="submit-btn">
