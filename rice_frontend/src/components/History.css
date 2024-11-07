@@ -137,4 +137,34 @@
     display: flex;
     align-items: center;
   }
+
+/* Style for the table cell (td) that contains the button */
+table td {
+  vertical-align: middle; /* Vertically center the content */
+  text-align: center;     /* Horizontally center the content */
+}
+
+.view-result-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 18px;
+  color: #007bff; /* Change color as needed */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0; /* Ensure no extra margin */
+}
+
+/* Optional: Add hover effect for the button */
+.view-result-btn:hover {
+  color: #0056b3;
+}
+
+.view-result-btn:focus {
+  outline: none; /* Removes outline when clicked */
+}
+
+  
   

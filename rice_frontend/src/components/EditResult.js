@@ -20,8 +20,9 @@ function EditResult() {
     // Fetch current data to prefill the form
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/history/${id}`);
+        const response = await axios.get(`http://localhost:5000/result/${id}`);
         const data = response.data;
+        console.log(data);
         setFormData({
           note: data.note || "",
           price: data.price || "",
@@ -51,15 +52,23 @@ function EditResult() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Prevent default form submission
+  
     try {
-      // Save changes to the backend
-      await axios.put(`/api/history/${id}`, formData);
-      navigate(`/result/${id}`); // Redirect to the Result page
+      // Make a PUT request to the backend API to update the data
+      const response = await axios.put(`http://localhost:5000/history/${id}`, formData);
+  
+      // Log the response from the backend (if any)
+      console.log(response.data);
+  
+      // Redirect to the result page after successful update
+      navigate(`/result/${id}`);
     } catch (error) {
       console.error("Error updating inspection data:", error);
+      // You can handle the error here (e.g., show an error message)
     }
   };
+  
 
   const handleCancel = () => {
     navigate(`/result/${id}`); // Redirect to the Result page without saving
@@ -75,7 +84,7 @@ function EditResult() {
             <label>Note:</label>
             <textarea
               name="note"
-              value={formData.note}
+              value={formData.note}  // Bind the state value here
               onChange={handleInputChange}
             />
           </div>
@@ -85,7 +94,7 @@ function EditResult() {
             <input
               type="number"
               name="price"
-              value={formData.price}
+              value={formData.price}  // Bind the state value here
               onChange={handleInputChange}
               min="0"
               max="100000"
@@ -98,7 +107,7 @@ function EditResult() {
             <input
               type="datetime-local"
               name="dateTime"
-              value={formData.dateTime}
+              value={formData.dateTime}  // Bind the state value here
               onChange={handleInputChange}
             />
           </div>
@@ -110,11 +119,10 @@ function EditResult() {
                 <label key={option} className="sampling-checkbox">
                   <input
                     type="checkbox"
-                    checked={formData.samplingPoints.includes(option)}
+                    checked={formData.samplingPoints.includes(option)}  // Check if option is selected
                     onChange={() => handleCheckboxChange(option)}
                   />
-                  <span>{option}</span>{" "}
-                  {/* Wrap text in a span for better control */}
+                  <span>{option}</span>
                 </label>
               ))}
             </div>

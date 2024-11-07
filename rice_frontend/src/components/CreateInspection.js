@@ -44,79 +44,140 @@ function CreateInspection() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // If a file is uploaded, process the JSON file
+    let selectedStandardData = [];
+    const selectedStandard = standards.find(
+      (standard) => standard.name === formData.standard
+    );
+  
+    if (selectedStandard) {
+      selectedStandardData = selectedStandard.standardData;
+    }
+  
     if (formData.upload) {
       const file = formData.upload;
-  
-      // Create a FileReader to read the file
       const reader = new FileReader();
   
       reader.onload = (event) => {
         try {
-          // Parse the JSON data from the file
           const jsonData = JSON.parse(event.target.result);
-  
-          // Extract requestID from the JSON
           const requestID = jsonData.requestID;
+          const imageURL = jsonData.imageURL;
+          const currentDateTime = new Date().toLocaleString();
   
-          // Log the form data
-          const currentDateTime = new Date();
-          const formattedDateTime = currentDateTime.toLocaleString();
+          // Calculate the total weight of all grains
+          const totalWeight = jsonData.grains.reduce(
+            (total, grain) => total + grain.weight,
+            0
+          );
+          const totalGrains = jsonData.grains.length;
   
-          console.log("Name:", formData.name);
-          console.log("Standard:", formData.standard);
-          console.log("Name of File:", file.name); // File name from the upload
-          console.log("Note:", formData.note);
-          console.log("Price:", formData.price);
-          console.log("Sampling Points:", formData.samplingPoints.join(", "));
-          console.log("Date/Time:", formData.dateTime);
-          console.log("Date/Time Submitted:", formattedDateTime);
+          // 1. Calculate typeweight (original percentage for each type)
+          const typeWeightSum = jsonData.grains.reduce((acc, grain) => {
+            acc[grain.type] = (acc[grain.type] || 0) + grain.weight;
+            return acc;
+          }, {});
   
-          // Log the Request ID from the uploaded JSON
-          console.log("Request ID from uploaded JSON:", requestID);
-
+          const typeweight = Object.keys(typeWeightSum).reduce((acc, type) => {
+            acc[type] = ((typeWeightSum[type] / totalWeight) * 100).toFixed(2);
+            return acc;
+          }, {});
+  
+          // 2. Calculate new_typeweight as an object
+          const ShapeWeightSum = {};
+  
+          selectedStandardData.forEach((standard) => {
+            const { minLength, maxLength, conditionMin, conditionMax, shape, name } = standard;
+  
+            // Filter grains that match the shape and length conditions
+            const matchingGrains = jsonData.grains.filter((grain) => {
+              // Check shape
+              const isShapeMatch = shape.includes(grain.shape); // Use grain.shape instead of grain.type
+              if (!isShapeMatch) {
+                console.log(`Shape mismatch for grain shape ${grain.shape} in standard ${name}`);
+              }
+  
+              // Check length conditions
+              const isMinConditionMet =
+                (conditionMin === "GT" && grain.length > minLength) ||
+                (conditionMin === "GE" && grain.length >= minLength);
+  
+              const isMaxConditionMet =
+                (conditionMax === "LT" && grain.length < maxLength) ||
+                (conditionMax === "LE" && grain.length <= maxLength);
+  
+              if (!isMinConditionMet || !isMaxConditionMet) {
+                console.log(
+                  `Length mismatch for grain shape ${grain.shape} in standard ${name}: ` +
+                  `minCondition: ${isMinConditionMet}, maxCondition: ${isMaxConditionMet}`
+                );
+              }
+  
+              return isShapeMatch && isMinConditionMet && isMaxConditionMet;
+            });
+  
+            // Sum weights for matching grains of this standard type
+            const sumWeight = matchingGrains.reduce(
+              (sum, grain) => sum + grain.weight,
+              0
+            );
+  
+            console.log(`Sum weight for ${name}: ${sumWeight}`);
+  
+            // Calculate the percentage of this matching type relative to total weight
+            const weightPercentage = ((sumWeight / totalWeight) * 100).toFixed(2);
+  
+            // Store the percentage in new_typeweight with the standard's name as the key
+            ShapeWeightSum[name] = weightPercentage;
+          });
+  
+          console.log(ShapeWeightSum);
 
           const dataToSubmit = {
             ID_Inspect: requestID,
             name: formData.name,
             standard: formData.standard,
+            imgUrl: imageURL,
             upload: formData.upload ? formData.upload.name : null,
             note: formData.note,
             price: formData.price,
             samplingPoints: formData.samplingPoints,
             dateTime: formData.dateTime,
-            dateTimeSubmitted: formattedDateTime,
+            dateTimeSubmitted: currentDateTime,
+            lastTimeUpdated: currentDateTime,
+            standardData: selectedStandardData,
+            typeweight: typeweight,             // Original typeweight percentages
+            shapeweight: ShapeWeightSum,    // Filtered typeweight percentages
+            totalGrains: totalGrains,
           };
-
-          console.log(dataToSubmit);
-        
-          // Send the form data to the backend
+  
+          console.log("Data to submit:", dataToSubmit);
+  
+          // Send data to backend
           axios
             .post("http://localhost:5000/history", dataToSubmit)
-            .then((response) => console.log(response))
-            .catch((error) => console.error(error));
-  
+            .then((response) => {
+              console.log("Data submitted:", response.data);
+              const { id } = response.data;
+              navigate(`/result/${id}`);
+            })
+            .catch((error) => console.error("Submission error:", error));
         } catch (error) {
           console.error("Error reading or parsing JSON file:", error);
         }
       };
   
-      // Read the file as text (expecting JSON format)
       reader.readAsText(file);
-      navigate("/history"); 
-
-      
     } else {
       console.log("No file uploaded.");
     }
   };
   
-
+  
   const handleCancel = () => {
-    navigate("/history"); // Navigate to the history page
+    navigate("/history");
   };
 
   return (

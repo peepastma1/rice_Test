@@ -20,21 +20,27 @@ const dataFilePath = path.join(__dirname, "data.json");
 // POST endpoint to handle the form submission
 app.post("/history", (req, res) => {
   const formData = req.body;
-  const uniqueID = uuidv4();
+  const uniqueID = uuidv4(); // Generate unique ID
   console.log("Generated ID:", uniqueID);
 
-  // Create an object with the submitted form data
+  // Create an object with the submitted form data, including standardData
   const dataToSubmit = {
     ID: uniqueID,
     ID_Inspect: formData.ID_Inspect,
     name: formData.name,
     standard: formData.standard,
-    upload: formData.upload ? formData.upload : null, // You may want to pass only the name, or the full file info
+    imgUrl: formData.imgUrl,
+    upload: formData.upload ? formData.upload : null,
     note: formData.note,
     price: formData.price,
     samplingPoints: formData.samplingPoints,
     dateTime: formData.dateTime,
     dateTimeSubmitted: new Date().toLocaleString(),
+    dateLastUpdate: formData.lastTimeUpdated,
+    standardData: formData.standardData || [],
+    typeweight : formData.typeweight,
+    shapeweight : formData.shapeweight,
+    totalGrains: formData.totalGrains,
   };
 
   // Check if data.json exists and is not empty
@@ -42,11 +48,9 @@ app.post("/history", (req, res) => {
     let jsonData = [];
 
     if (err || !data || data.toString().trim() === "") {
-      // If data.json doesn't exist or is empty, create a new file with an empty array
       console.log("data.json not found or is empty, creating new file...");
       jsonData = [];
     } else {
-      // If the file exists, parse the JSON data
       try {
         jsonData = JSON.parse(data);
       } catch (parseError) {
@@ -66,47 +70,66 @@ app.post("/history", (req, res) => {
       }
 
       console.log("Data saved successfully to data.json.");
-      return res.status(200).send("Data saved successfully.");
+
+      // Send the ID of the newly created inspection back to the client
+      return res.status(200).json({ id: uniqueID }); // Send the ID as part of the response
     });
   });
 });
 
 
 app.get('/history', (req, res) => {
-    const { page = 1, limit = 5, fromDate, toDate } = req.query;
-  
-    fs.readFile(dataFilePath, (err, data) => {
-      if (err) return res.status(500).send('Error reading data file');
-  
-      let jsonData = JSON.parse(data);
-  
+  const { page = 1, limit = 5, fromDate, toDate } = req.query;
+
+  fs.readFile(dataFilePath, (err, data) => {
+      // Check if there's an error or if data is empty
+      if (err || !data || data.toString().trim() === "") {
+          console.log("No data found in data.json or file is empty.");
+          return res.json({
+              records: [],
+              totalPages: 0,
+          });
+      }
+
+      let jsonData = [];
+      try {
+          jsonData = JSON.parse(data);
+      } catch (parseError) {
+          console.error("Error parsing data.json:", parseError);
+          return res.json({
+              records: [],
+              totalPages: 0,
+          });
+      }
+
       // Filter by date range if provided
       if (fromDate && toDate) {
-        jsonData = jsonData.filter((item) => {
-          const itemDate = new Date(item.dateTimeSubmitted);
-          return itemDate >= new Date(fromDate) && itemDate <= new Date(toDate);
-        });
+          jsonData = jsonData.filter((item) => {
+              const itemDate = new Date(item.dateTimeSubmitted);
+              return itemDate >= new Date(fromDate) && itemDate <= new Date(toDate);
+          });
       }
-  
+
       // Sort by dateTimeSubmitted from newest to oldest (descending order)
       jsonData.sort((a, b) => {
-        const dateA = new Date(a.dateTimeSubmitted);
-        const dateB = new Date(b.dateTimeSubmitted);
-        return dateB - dateA;  // Sorting in descending order
+          const dateA = new Date(a.dateTimeSubmitted);
+          const dateB = new Date(b.dateTimeSubmitted);
+          return dateB - dateA;  // Sorting in descending order
       });
-  
+
       // Apply pagination
       const totalPages = Math.ceil(jsonData.length / limit);
       const startIndex = (page - 1) * limit;
       const endIndex = page * limit;
       const paginatedData = jsonData.slice(startIndex, endIndex);
-  
+
       res.json({
-        records: paginatedData,
-        totalPages,
+          records: paginatedData,
+          totalPages,
       });
-    });
   });
+});
+
   
 
   app.get("/history/:searchId?", (req, res) => {
@@ -132,7 +155,7 @@ app.get('/history', (req, res) => {
       // Apply filtering based on searchId (ID_Inspect starts with search term)
       if (searchId) {
         jsonData = jsonData.filter((record) =>
-          record.ID_Inspect && record.ID_Inspect.startsWith(searchId)
+          record.ID && record.ID.startsWith(searchId)
         );
       }
   
@@ -209,8 +232,82 @@ app.get('/history', (req, res) => {
       });
     });
   });
+
+  app.get('/result/:id', (req, res) => {
+    const { id } = req.params;  // Get the ID from URL parameter
   
+    fs.readFile(dataFilePath, (err, data) => {
+      if (err || !data || data.toString().trim() === "") {
+        console.log("No data found in data.json or file is empty.");
+        return res.status(404).json({ message: "Inspection not found." });
+      }
   
+      let jsonData = [];
+      try {
+        jsonData = JSON.parse(data);
+      } catch (parseError) {
+        console.error("Error parsing data.json:", parseError);
+        return res.status(500).json({ message: "Error parsing data." });
+      }
+  
+      // Find the inspection by ID
+      const inspection = jsonData.find(item => item.ID === id);
+  
+      if (!inspection) {
+        return res.status(404).json({ message: "Inspection not found." });
+      }
+  
+      // Return the inspection data
+      res.json(inspection);
+    });
+  });
+  
+  app.put("/history/:id", (req, res) => {
+    const { id } = req.params;
+    const { note, price, dateTime, samplingPoints } = req.body;
+  
+    // Read the file
+    fs.readFile(dataFilePath, "utf8", (err, data) => {
+      if (err) {
+        console.error("Error reading data.json:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      }
+  
+      // Parse JSON data
+      let jsonData = [];
+      try {
+        jsonData = JSON.parse(data);
+      } catch (parseError) {
+        console.error("Error parsing data.json:", parseError);
+        return res.status(500).json({ error: "Error parsing data.json" });
+      }
+  
+      // Find the record with the matching ID
+      const recordIndex = jsonData.findIndex((item) => item.ID === id);
+      if (recordIndex === -1) {
+        return res.status(404).json({ error: "Record not found" });
+      }
+  
+      // Update fields
+      jsonData[recordIndex].note = note || jsonData[recordIndex].note;
+      jsonData[recordIndex].price = price || jsonData[recordIndex].price;
+      jsonData[recordIndex].dateTime = dateTime || jsonData[recordIndex].dateTime;
+      jsonData[recordIndex].samplingPoints = samplingPoints || jsonData[recordIndex].samplingPoints;
+  
+      // Update dateLastUpdate to the current date/time
+      const currentDateTime = new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" });
+      jsonData[recordIndex].dateLastUpdate = currentDateTime;
+  
+      // Write the updated data back to data.json
+      fs.writeFile(dataFilePath, JSON.stringify(jsonData, null, 2), "utf8", (writeErr) => {
+        if (writeErr) {
+          console.error("Error writing data.json:", writeErr);
+          return res.status(500).json({ error: "Error writing to data.json" });
+        }
+        res.status(200).json({ message: "Data updated successfully" });
+      });
+    });
+  });
   
 
 // Start the server

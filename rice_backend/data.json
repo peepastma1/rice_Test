@@ -1,156 +1,201 @@
 [
   {
-    "ID": "8049f0f8-2378-4ca5-abf0-4301b85e521e",
-    "ID_Inspect": "1",
-    "name": "ggg",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "gggg",
-    "price": "0.04",
-    "samplingPoints": [
-      "Back End"
-    ],
-    "dateTime": "2024-11-01T13:18",
-    "dateTimeSubmitted": "7/11/2567 13:19:45"
-  },
-  {
-    "ID": "1aae3282-6cb3-4124-a032-b64a6d39103d",
-    "ID_Inspect": "try",
-    "name": "ggg",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "gggg",
-    "price": "0.04",
-    "samplingPoints": [
-      "Back End"
-    ],
-    "dateTime": "2024-11-01T13:18",
-    "dateTimeSubmitted": "7/11/2567 13:19:46"
-  },
-  {
-    "ID": "56274fe2-95e3-4609-b428-dd29741cee7f",
+    "ID": "4b9a1f6d-a7ea-43c6-9ef8-9a9c0f29a24a",
     "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
-    "name": "ggg",
+    "name": "test001",
     "standard": "มาตรฐานข้าวชั้น 2",
+    "imgUrl": "https://easyrice-es-trade-data.s3.ap-southeast-1.amazonaws.com/example-rice.webp",
     "upload": "raw.json",
-    "note": "gggg",
-    "price": "0.04",
-    "samplingPoints": [
-      "Back End"
-    ],
-    "dateTime": "2024-11-01T13:18",
-    "dateTimeSubmitted": "7/11/2567 13:19:47"
-  },
-  {
-    "ID": "cca0a299-c05c-4676-96dc-b20f356f1864",
-    "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
-    "name": "ggg",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "gggg",
-    "price": "0.04",
-    "samplingPoints": [
-      "Back End"
-    ],
-    "dateTime": "2024-11-01T13:18",
-    "dateTimeSubmitted": "7/11/2567 13:19:47"
-  },
-  {
-    "ID": "92c18364-e699-4820-a3ac-de832c2672a5",
-    "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
-    "name": "ggg",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "gggg",
-    "price": "0.04",
-    "samplingPoints": [
-      "Back End"
-    ],
-    "dateTime": "2024-11-01T13:18",
-    "dateTimeSubmitted": "7/11/2567 13:19:47"
-  },
-  {
-    "ID": "d3b5effe-138d-4aad-a544-47ac84ca5074",
-    "ID_Inspect": "try",
-    "name": "testter",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "fff",
-    "price": "111",
+    "note": "rgerg",
+    "price": "100",
     "samplingPoints": [
       "Front End"
     ],
-    "dateTime": "2024-10-31T13:44",
-    "dateTimeSubmitted": "7/11/2567 13:44:32"
-  },
-  {
-    "ID": "277dba70-e21e-4e78-aacc-8c663c7588e0",
-    "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
-    "name": "testter",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "fff",
-    "price": "111",
-    "samplingPoints": [
-      "Front End"
+    "dateTime": "2024-10-30T23:47",
+    "dateTimeSubmitted": "7/11/2567 23:47:30",
+    "dateLastUpdate": "7/11/2567 23:47:30",
+    "standardData": [
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "wholegrain",
+        "name": "ข้าวเต็มเมล็ด",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "maxLength": 99,
+        "minLength": 6
+      },
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "broken_rice1",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "name": "ข้าวหักใหญ่",
+        "maxLength": 6,
+        "minLength": 4.5
+      },
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "broken_rice2",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "name": "ข้าวหักทั่วไป",
+        "maxLength": 4.5,
+        "minLength": 0
+      }
     ],
-    "dateTime": "2024-10-31T13:44",
-    "dateTimeSubmitted": "7/11/2567 13:44:33"
+    "typeweight": {
+      "wholegrain": "84.17",
+      "broken": "15.83"
+    },
+    "shapeweight": {
+      "ข้าวเต็มเมล็ด": "88.39",
+      "ข้าวหักใหญ่": "11.12",
+      "ข้าวหักทั่วไป": "0.48"
+    },
+    "totalGrains": 1033
   },
   {
-    "ID": "22a90839-9b30-4433-876b-42ac5904fee3",
+    "ID": "3f5c8835-f5d9-4472-bd8f-e4bea11cf4bb",
     "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
-    "name": "testter",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "fff",
-    "price": "111",
-    "samplingPoints": [
-      "Front End"
-    ],
-    "dateTime": "2024-10-31T13:44",
-    "dateTimeSubmitted": "7/11/2567 13:44:33"
-  },
-  {
-    "ID": "b88df6e9-ff58-4512-9fd0-31eaadd6208e",
-    "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
-    "name": "testter",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "fff",
-    "price": "111",
-    "samplingPoints": [
-      "Front End"
-    ],
-    "dateTime": "2024-10-31T13:44",
-    "dateTimeSubmitted": "7/11/2567 13:44:33"
-  },
-  {
-    "ID": "b20b9b85-5b0f-4dde-b10f-c5362ef298f2",
-    "ID_Inspect": "try",
-    "name": "testter",
-    "standard": "มาตรฐานข้าวชั้น 2",
-    "upload": "raw.json",
-    "note": "fff",
-    "price": "111",
-    "samplingPoints": [
-      "Front End"
-    ],
-    "dateTime": "2024-10-31T13:44",
-    "dateTimeSubmitted": "7/11/2567 13:44:33"
-  },
-  {
-    "ID": "ce873035-ff79-4767-9697-6cc90a7765cd",
-    "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
-    "name": "werfe",
+    "name": "test",
     "standard": "มาตรฐานข้าวชั้น 1",
+    "imgUrl": "https://easyrice-es-trade-data.s3.ap-southeast-1.amazonaws.com/example-rice.webp",
     "upload": "raw.json",
-    "note": "fff",
-    "price": "12",
+    "note": "54y",
+    "price": "1",
     "samplingPoints": [
       "Front End"
     ],
-    "dateTime": "2024-11-08T14:20",
-    "dateTimeSubmitted": "7/11/2567 14:20:13"
+    "dateTime": "2024-11-02T23:53",
+    "dateTimeSubmitted": "7/11/2567 23:53:24",
+    "dateLastUpdate": "7/11/2567 23:53:24",
+    "standardData": [
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "wholegrain",
+        "name": "ข้าวเต็มเมล็ด",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "maxLength": 99,
+        "minLength": 7
+      },
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "broken_rice1",
+        "name": "ข้าวหักใหญ่",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "maxLength": 7,
+        "minLength": 3.5
+      },
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "broken_rice2",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "name": "ข้าวหักทั่วไป",
+        "maxLength": 3.5,
+        "minLength": 0
+      }
+    ],
+    "typeweight": {
+      "white": "51.61",
+      "chalky": "46.09",
+      "yellow": "1.72",
+      "undermilled": "0.48",
+      "glutinous": "0.10"
+    },
+    "shapeweight": {
+      "ข้าวเต็มเมล็ด": "42.40",
+      "ข้าวหักใหญ่": "57.54",
+      "ข้าวหักทั่วไป": "0.06"
+    },
+    "totalGrains": 1033
+  },
+  {
+    "ID": "75b0e557-a21c-4927-8c6a-320db9390ceb",
+    "ID_Inspect": "e562a660-47b6-4d90-93fe-1d10dc165bba",
+    "name": "test001",
+    "standard": "มาตรฐานข้าวชั้น 2",
+    "imgUrl": "https://easyrice-es-trade-data.s3.ap-southeast-1.amazonaws.com/example-rice.webp",
+    "upload": "raw.json",
+    "note": "try to edit",
+    "price": "10000",
+    "samplingPoints": [
+      "Front End",
+      "Back End"
+    ],
+    "dateTime": "2024-10-30T23:53",
+    "dateTimeSubmitted": "7/11/2567 23:53:40",
+    "dateLastUpdate": "8/11/2567 00:39:04",
+    "standardData": [
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "wholegrain",
+        "name": "ข้าวเต็มเมล็ด",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "maxLength": 99,
+        "minLength": 6
+      },
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "broken_rice1",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "name": "ข้าวหักใหญ่",
+        "maxLength": 6,
+        "minLength": 4.5
+      },
+      {
+        "conditionMax": "LT",
+        "conditionMin": "GT",
+        "key": "broken_rice2",
+        "shape": [
+          "wholegrain",
+          "broken"
+        ],
+        "name": "ข้าวหักทั่วไป",
+        "maxLength": 4.5,
+        "minLength": 0
+      }
+    ],
+    "typeweight": {
+      "white": "51.61",
+      "chalky": "46.09",
+      "yellow": "1.72",
+      "undermilled": "0.48",
+      "glutinous": "0.10"
+    },
+    "shapeweight": {
+      "ข้าวเต็มเมล็ด": "88.39",
+      "ข้าวหักใหญ่": "11.12",
+      "ข้าวหักทั่วไป": "0.48"
+    },
+    "totalGrains": 1033
   }
 ]
