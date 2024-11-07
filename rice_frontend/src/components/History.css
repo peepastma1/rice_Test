@@ -16,6 +16,7 @@
     justify-content: space-between; /* Push the button to the right */
     align-items: center;
     margin-bottom: 20px;
+    /* margin-top: 300px; */
   }
   
   .create-inspection-btn {

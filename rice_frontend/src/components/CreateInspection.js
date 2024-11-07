@@ -77,12 +77,27 @@ function CreateInspection() {
   
           // Log the Request ID from the uploaded JSON
           console.log("Request ID from uploaded JSON:", requestID);
-  
-          // Uncomment this to send the data to the backend
-          // axios
-          //   .post("/api/history", formData)
-          //   .then((response) => console.log(response))
-          //   .catch((error) => console.error("Error posting data:", error));
+
+
+          const dataToSubmit = {
+            ID_Inspect: requestID,
+            name: formData.name,
+            standard: formData.standard,
+            upload: formData.upload ? formData.upload.name : null,
+            note: formData.note,
+            price: formData.price,
+            samplingPoints: formData.samplingPoints,
+            dateTime: formData.dateTime,
+            dateTimeSubmitted: formattedDateTime,
+          };
+
+          console.log(dataToSubmit);
+        
+          // Send the form data to the backend
+          axios
+            .post("http://localhost:5000/history", dataToSubmit)
+            .then((response) => console.log(response))
+            .catch((error) => console.error(error));
   
         } catch (error) {
           console.error("Error reading or parsing JSON file:", error);
@@ -91,6 +106,8 @@ function CreateInspection() {
   
       // Read the file as text (expecting JSON format)
       reader.readAsText(file);
+
+      
     } else {
       console.log("No file uploaded.");
       

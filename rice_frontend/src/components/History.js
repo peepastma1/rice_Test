@@ -13,25 +13,38 @@ function History() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const recordsPerPage = 10; // Number of records to show per page
+  const recordsPerPage = 5; // Number of records to show per page
 
   // Fetch history records with pagination, search, and date filters
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let url = "http://localhost:5000/history"; // Default URL for all records
+
+        // If there's a searchId, update the URL to fetch specific inspection ID
+        if (searchId) {
+          url = `http://localhost:5000/history/${searchId}`; // URL for searching by ID_Inspect
+        }
+
         const params = {
           page: currentPage,
           limit: recordsPerPage,
-          id: searchId,
           fromDate: dateRange.from,
           toDate: dateRange.to,
         };
 
-        const response = await axios.get("/api/history", { params });
-        setHistory(response.data.records);
-        setTotalPages(response.data.totalPages);
+        const response = await axios.get(url, { params });
+
+        // If no records are found, clear the table
+        if (response.data.records.length === 0) {
+          setHistory([]);
+        } else {
+          setHistory(response.data.records);
+          setTotalPages(response.data.totalPages);
+        }
       } catch (error) {
         console.error("Error fetching history:", error);
+        setHistory([]); // Clear history on error
       }
     };
 
@@ -65,19 +78,45 @@ function History() {
   // Handle bulk delete
   const handleDelete = async () => {
     try {
-      await axios.delete("/api/history", { data: { ids: selectedRecords } });
-      setHistory((prevHistory) =>
-        prevHistory.filter((record) => !selectedRecords.includes(record.id))
-      );
+      // Loop through each selected record and send a DELETE request for each
+      for (const id of selectedRecords) {
+        const url = `http://localhost:5000/history/${id}`;  // DELETE request to the correct endpoint
+        await axios.delete(url); // DELETE request with ID in the URL
+      }
+
+      setCurrentPage(1);
+  
+      // After deletion, re-fetch the history to get the updated data
+      fetchData();  // This function will fetch the updated records from the server
       setSelectedRecords([]); // Clear selection
+  
     } catch (error) {
       console.error("Error deleting records:", error);
     }
   };
 
+  const fetchData = async () => {
+    try {
+      const params = {
+        page: currentPage,
+        limit: recordsPerPage,
+        id: searchId,
+        fromDate: dateRange.from,
+        toDate: dateRange.to,
+      };
+  
+      const response = await axios.get("http://localhost:5000/history", { params });
+      setHistory(response.data.records);
+      setTotalPages(response.data.totalPages); // Update the total number of pages
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
+  
+
   // Navigate to the result page
   const handleRowClick = (id) => {
-    navigate(`/result/${id}`);
+    // navigate(`/result/${id}`);
   };
 
   // Render pagination controls
@@ -104,10 +143,13 @@ function History() {
   return (
     <div className="history-container">
       <div className="header">
-    <h2>History</h2>
-    <button className="create-inspection-btn" onClick={handleCreateInspection}>+ Create Inspection</button>
-  </div>
+        <h2>History</h2>
+        <button className="create-inspection-btn" onClick={handleCreateInspection}>
+          + Create Inspection
+        </button>
+      </div>
       {/* Search and Filter Section */}
+      
       <div className="filter-block">
         <div className="filter-section">
           <div className="search-form">
@@ -182,30 +224,38 @@ function History() {
           </tr>
         </thead>
         <tbody>
-          {history.map((record) => (
-            <tr key={record.id} onClick={() => handleRowClick(record.id)}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedRecords.includes(record.id)}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    handleCheckboxChange(record.id);
-                  }}
-                />
+          {history.length === 0 ? (
+            <tr>
+              <td colSpan="6" style={{ textAlign: "center" }}>
+                No records found.
               </td>
-              <td>{record.createdAt}</td>
-              <td>{record.id}</td>
-              <td>{record.name}</td>
-              <td>{record.standard}</td>
-              <td>{record.note}</td>
             </tr>
-          ))}
+          ) : (
+            history.map((record) => (
+              <tr key={record.ID} onClick={() => handleRowClick(record.ID)}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedRecords.includes(record.ID)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleCheckboxChange(record.ID);
+                    }}
+                  />
+                </td>
+                <td>{record.dateTimeSubmitted}</td>
+                <td>{record.ID_Inspect}</td>
+                <td>{record.name}</td>
+                <td>{record.standard}</td>
+                <td>{record.note}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
 
       {/* Pagination Controls */}
-      {renderPagination()}
+      {history.length > 0 && renderPagination()}
     </div>
   );
 }
