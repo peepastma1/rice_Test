@@ -73,7 +73,7 @@ app.post("/history", (req, res) => {
 
 
 app.get('/history', (req, res) => {
-    const { page = 1, limit = 10, fromDate, toDate } = req.query;
+    const { page = 1, limit = 5, fromDate, toDate } = req.query;
   
     fs.readFile(dataFilePath, (err, data) => {
       if (err) return res.status(500).send('Error reading data file');
@@ -88,6 +88,13 @@ app.get('/history', (req, res) => {
         });
       }
   
+      // Sort by dateTimeSubmitted from newest to oldest (descending order)
+      jsonData.sort((a, b) => {
+        const dateA = new Date(a.dateTimeSubmitted);
+        const dateB = new Date(b.dateTimeSubmitted);
+        return dateB - dateA;  // Sorting in descending order
+      });
+  
       // Apply pagination
       const totalPages = Math.ceil(jsonData.length / limit);
       const startIndex = (page - 1) * limit;
@@ -100,6 +107,7 @@ app.get('/history', (req, res) => {
       });
     });
   });
+  
 
   app.get("/history/:searchId?", (req, res) => {
     const searchId = req.params.searchId || ''; // If no searchId is provided, it will be an empty string
@@ -138,6 +146,13 @@ app.get('/history', (req, res) => {
         });
       }
   
+      // Sort by dateTimeSubmitted (newest first)
+      jsonData.sort((a, b) => {
+        const dateA = new Date(a.dateTimeSubmitted);
+        const dateB = new Date(b.dateTimeSubmitted);
+        return dateB - dateA; // Sorting in descending order
+      });
+  
       // Implement pagination
       const totalRecords = jsonData.length;
       const totalPages = Math.ceil(totalRecords / limit);
@@ -150,6 +165,7 @@ app.get('/history', (req, res) => {
       });
     });
   });
+  
   
 
   app.delete("/history/:id", (req, res) => {

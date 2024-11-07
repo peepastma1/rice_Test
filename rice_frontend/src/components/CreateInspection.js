@@ -106,17 +106,11 @@ function CreateInspection() {
   
       // Read the file as text (expecting JSON format)
       reader.readAsText(file);
+      navigate("/history"); 
 
       
     } else {
       console.log("No file uploaded.");
-      
-      // If no file is uploaded, send the form data without the file
-      // Uncomment this to send the data to the backend
-      // axios
-      //   .post("/api/history", formData)
-      //   .then((response) => console.log(response))
-      //   .catch((error) => console.error("Error posting data:", error));
     }
   };
   
