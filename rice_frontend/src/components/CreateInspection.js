@@ -65,16 +65,15 @@ function CreateInspection() {
           const jsonData = JSON.parse(event.target.result);
           const requestID = jsonData.requestID;
           const imageURL = jsonData.imageURL;
-          const currentDateTime = new Date().toLocaleString();
+          // const currentDateTime = new Date().toLocaleString();
+          const currentDateTime = new Date();
   
-          // Calculate the total weight of all grains
           const totalWeight = jsonData.grains.reduce(
             (total, grain) => total + grain.weight,
             0
           );
           const totalGrains = jsonData.grains.length;
   
-          // 1. Calculate typeweight (original percentage for each type)
           const typeWeightSum = jsonData.grains.reduce((acc, grain) => {
             acc[grain.type] = (acc[grain.type] || 0) + grain.weight;
             return acc;
@@ -85,21 +84,17 @@ function CreateInspection() {
             return acc;
           }, {});
   
-          // 2. Calculate new_typeweight as an object
           const ShapeWeightSum = {};
   
           selectedStandardData.forEach((standard) => {
             const { minLength, maxLength, conditionMin, conditionMax, shape, name } = standard;
   
-            // Filter grains that match the shape and length conditions
             const matchingGrains = jsonData.grains.filter((grain) => {
-              // Check shape
-              const isShapeMatch = shape.includes(grain.shape); // Use grain.shape instead of grain.type
-              if (!isShapeMatch) {
-                console.log(`Shape mismatch for grain shape ${grain.shape} in standard ${name}`);
-              }
+              const isShapeMatch = shape.includes(grain.shape);
+              // if (!isShapeMatch) {
+              //   console.log(`Shape mismatch for grain shape ${grain.shape} in standard ${name}`);
+              // }
   
-              // Check length conditions
               const isMinConditionMet =
                 (conditionMin === "GT" && grain.length > minLength) ||
                 (conditionMin === "GE" && grain.length >= minLength);
@@ -108,32 +103,29 @@ function CreateInspection() {
                 (conditionMax === "LT" && grain.length < maxLength) ||
                 (conditionMax === "LE" && grain.length <= maxLength);
   
-              if (!isMinConditionMet || !isMaxConditionMet) {
-                console.log(
-                  `Length mismatch for grain shape ${grain.shape} in standard ${name}: ` +
-                  `minCondition: ${isMinConditionMet}, maxCondition: ${isMaxConditionMet}`
-                );
-              }
+              // if (!isMinConditionMet || !isMaxConditionMet) {
+              //   console.log(
+              //     `Length mismatch for grain shape ${grain.shape} in standard ${name}: ` +
+              //     `minCondition: ${isMinConditionMet}, maxCondition: ${isMaxConditionMet}`
+              //   );
+              // }
   
               return isShapeMatch && isMinConditionMet && isMaxConditionMet;
             });
   
-            // Sum weights for matching grains of this standard type
             const sumWeight = matchingGrains.reduce(
               (sum, grain) => sum + grain.weight,
               0
             );
   
-            console.log(`Sum weight for ${name}: ${sumWeight}`);
+            // console.log(`Sum weight for ${name}: ${sumWeight}`);
   
-            // Calculate the percentage of this matching type relative to total weight
             const weightPercentage = ((sumWeight / totalWeight) * 100).toFixed(2);
   
-            // Store the percentage in new_typeweight with the standard's name as the key
             ShapeWeightSum[name] = weightPercentage;
           });
   
-          console.log(ShapeWeightSum);
+          // console.log(ShapeWeightSum);
 
           const dataToSubmit = {
             ID_Inspect: requestID,
@@ -148,18 +140,17 @@ function CreateInspection() {
             dateTimeSubmitted: currentDateTime,
             lastTimeUpdated: currentDateTime,
             standardData: selectedStandardData,
-            typeweight: typeweight,             // Original typeweight percentages
-            shapeweight: ShapeWeightSum,    // Filtered typeweight percentages
+            typeweight: typeweight,
+            shapeweight: ShapeWeightSum,
             totalGrains: totalGrains,
           };
   
-          console.log("Data to submit:", dataToSubmit);
+          // console.log("Data to submit:", dataToSubmit);
   
-          // Send data to backend
           axios
             .post("http://localhost:5000/history", dataToSubmit)
             .then((response) => {
-              console.log("Data submitted:", response.data);
+              // console.log("Data submitted:", response.data);
               const { id } = response.data;
               navigate(`/result/${id}`);
             })
@@ -172,6 +163,7 @@ function CreateInspection() {
       reader.readAsText(file);
     } else {
       console.log("No file uploaded.");
+      alert("No file uploaded.");
     }
   };
   
@@ -259,10 +251,10 @@ function CreateInspection() {
           />
 
           <div className="button-container">
-            <button type="button" className="cancel-btn" onClick={handleCancel}>
+            <button type="button" className="cancel-btn" onClick={handleCancel} style={{ backgroundColor: "#f44336", color: "white" }}>
               Cancel
             </button>
-            <button type="submit" className="submit-btn">
+            <button type="submit" className="submit-btn" style={{ backgroundColor: "#4caf50", color: "white" }}>
               Submit
             </button>
           </div>

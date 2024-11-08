@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./EditResult.css"; // Import CSS for styling
+import "./EditResult.css";
 
 function EditResult() {
-  const { id } = useParams(); // Gets the inspection ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     note: "",
@@ -13,11 +13,9 @@ function EditResult() {
     samplingPoints: [],
   });
 
-  // Options for Sampling Points
   const samplingOptions = ["Front End", "Back End", "Other"];
 
   useEffect(() => {
-    // Fetch current data to prefill the form
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/result/${id}`);
@@ -52,26 +50,23 @@ function EditResult() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();  // Prevent default form submission
-  
+    e.preventDefault();
+
     try {
-      // Make a PUT request to the backend API to update the data
-      const response = await axios.put(`http://localhost:5000/history/${id}`, formData);
-  
-      // Log the response from the backend (if any)
+      const response = await axios.put(
+        `http://localhost:5000/history/${id}`,
+        formData
+      );
       console.log(response.data);
-  
-      // Redirect to the result page after successful update
+
       navigate(`/result/${id}`);
     } catch (error) {
       console.error("Error updating inspection data:", error);
-      // You can handle the error here (e.g., show an error message)
     }
   };
-  
 
   const handleCancel = () => {
-    navigate(`/result/${id}`); // Redirect to the Result page without saving
+    navigate(`/result/${id}`);
   };
 
   return (
@@ -84,7 +79,7 @@ function EditResult() {
             <label>Note:</label>
             <textarea
               name="note"
-              value={formData.note}  // Bind the state value here
+              value={formData.note}
               onChange={handleInputChange}
             />
           </div>
@@ -94,7 +89,7 @@ function EditResult() {
             <input
               type="number"
               name="price"
-              value={formData.price}  // Bind the state value here
+              value={formData.price}
               onChange={handleInputChange}
               min="0"
               max="100000"
@@ -107,7 +102,7 @@ function EditResult() {
             <input
               type="datetime-local"
               name="dateTime"
-              value={formData.dateTime}  // Bind the state value here
+              value={formData.dateTime}
               onChange={handleInputChange}
             />
           </div>
@@ -119,7 +114,7 @@ function EditResult() {
                 <label key={option} className="sampling-checkbox">
                   <input
                     type="checkbox"
-                    checked={formData.samplingPoints.includes(option)}  // Check if option is selected
+                    checked={formData.samplingPoints.includes(option)}
                     onChange={() => handleCheckboxChange(option)}
                   />
                   <span>{option}</span>
@@ -132,7 +127,9 @@ function EditResult() {
             <button type="button" onClick={handleCancel}>
               Cancel
             </button>
-            <button type="submit" className="submit-button">Submit</button>
+            <button type="submit" className="submit-button">
+              Submit
+            </button>
           </div>
         </form>
       </div>

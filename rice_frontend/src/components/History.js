@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaSearch } from "react-icons/fa";  // Import the icon
+import { FaSearch } from "react-icons/fa";
 import "./History.css";
 
 function History() {
@@ -12,10 +12,8 @@ function History() {
   const [dateRange, setDateRange] = useState({ from: "", to: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const recordsPerPage = 5;
 
-  // Fetch history data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,6 +45,17 @@ function History() {
 
     fetchData();
   }, [currentPage, searchId, dateRange]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
 
   const handleSearch = () => {
     setCurrentPage(1);
@@ -94,7 +103,9 @@ function History() {
         toDate: dateRange.to,
       };
 
-      const response = await axios.get("http://localhost:5000/history", { params });
+      const response = await axios.get("http://localhost:5000/history", {
+        params,
+      });
       setHistory(response.data.records);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -102,12 +113,10 @@ function History() {
     }
   };
 
-  // Navigate to the result page
   const handleRowClick = (id) => {
     navigate(`/result/${id}`);
   };
 
-  // Render pagination controls
   const renderPagination = () => (
     <div className="pagination">
       <button
@@ -132,12 +141,14 @@ function History() {
     <div className="history-container">
       <div className="header">
         <h2>History</h2>
-        <button className="create-inspection-btn" onClick={handleCreateInspection}>
+        <button
+          className="create-inspection-btn"
+          onClick={handleCreateInspection}
+        >
           + Create Inspection
         </button>
       </div>
 
-      {/* Search and Filter Section */}
       <div className="filter-block">
         <div className="filter-section">
           <div className="search-form">
@@ -194,12 +205,10 @@ function History() {
         </div>
       </div>
 
-      {/* Delete Button */}
       <button disabled={!selectedRecords.length} onClick={handleDelete}>
         Delete Selected
       </button>
 
-      {/* History Table */}
       <table>
         <thead>
           <tr>
@@ -209,7 +218,7 @@ function History() {
             <th>Name</th>
             <th>Standard</th>
             <th>Note</th>
-            <th>View Result</th> {/* New column for the icon */}
+            <th>View Result</th>
           </tr>
         </thead>
         <tbody>
@@ -232,7 +241,7 @@ function History() {
                     }}
                   />
                 </td>
-                <td>{record.dateTimeSubmitted}</td>
+                <td>{formatDate(record.dateTimeSubmitted)}</td>
                 <td>{record.ID}</td>
                 <td>{record.name}</td>
                 <td>{record.standard}</td>
@@ -251,7 +260,6 @@ function History() {
         </tbody>
       </table>
 
-      {/* Pagination Controls */}
       {history.length > 0 && renderPagination()}
     </div>
   );
