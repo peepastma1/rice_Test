@@ -17,7 +17,7 @@ setup
     -node server.js
 
 This project's Limitation :
-- On this project Data will be save at Data.json (if not have this json file it will be created automatically).
+- On this project Data will be save at data.json (if not have this json file it will be created automatically).
 - the function about calculating rice is on the frontend, backend role on this project is reading and writing data on data.json
 - example data that in data.json
 
